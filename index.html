@@ -1,0 +1,77 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no,viewport-fit=cover">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="Lanternfall">
+<meta name="format-detection" content="telephone=no">
+<meta name="robots" content="noindex,nofollow">
+<meta name="referrer" content="no-referrer">
+<meta name="description" content="Lanternfall: Emberwood. Wake a sleeping forest with one small lantern, alone or with a friend.">
+<meta property="og:type" content="website">
+<meta property="og:title" content="Lanternfall: Emberwood">
+<meta property="og:description" content="One small lantern. A sleeping forest. Bring a friend.">
+<meta property="og:image" content="https://fabiohelper.github.io/lanternfall/og.jpg?v=">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta property="og:image:alt" content="A small keeper with a lantern stands on a moonlit forest path leading to a shrine gate, under the golden Lanternfall title.">
+<meta name="twitter:card" content="summary_large_image">
+<link rel="apple-touch-icon" href="apple-touch-icon.png">
+<link rel="icon" type="image/png" href="icon-192.png">
+<link rel="manifest" href="manifest.webmanifest">
+<meta name="lanternfall-build" content="7bad64c3">
+<title>Lanternfall</title>
+<meta name="theme-color" content="#0d0f1a">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IM+Fell+English:ital@0;1&family=IM+Fell+English+SC&family=Pixelify+Sans:wght@400;600&display=swap">
+<style>
+/* the lock screen (law BUILD-8): all a stranger ever sees of the published game */
+html,body{margin:0;height:100%;background:#0d0f1a;color:#ece2c8;-webkit-text-size-adjust:100%}
+body{display:grid;place-items:center;background:radial-gradient(ellipse at 50% 38%,rgba(255,178,88,.16),transparent 55%),radial-gradient(ellipse at 50% 120%,#1d2440,#0d0f1a 70%)}
+#lock{width:min(340px,calc(100% - 40px));text-align:center;padding-bottom:env(safe-area-inset-bottom,0px)}
+#lock svg{width:42px;height:54px;filter:drop-shadow(0 0 14px rgba(255,190,90,.65))}
+#lock .fl{animation:fl 2.4s ease-in-out infinite;transform-origin:7px 9px}
+@keyframes fl{50%{opacity:.75;transform:scale(.92)}}
+#lock h1{margin:14px 0 6px;font:400 44px/1 "IM Fell English SC","IM Fell English",Georgia,serif;letter-spacing:.04em;color:#ffd36b}
+#lock p{margin:0 auto 22px;max-width:28ch;font:italic 17px/1.4 "IM Fell English",Georgia,serif;color:rgba(236,226,200,.78)}
+#lf{display:flex;gap:8px}
+#lk{flex:1;min-width:0;height:46px;box-sizing:border-box;padding:0 12px;border:2px solid rgba(236,226,200,.3);border-radius:0;background:#0f0e1f;color:#fff1d2;font:600 16px/1 "Pixelify Sans",ui-monospace,monospace;letter-spacing:.12em;text-transform:uppercase;outline:none}
+#lk:focus{border-color:#ffd36b}
+#lb{flex:none;height:46px;padding:0 16px;border:0;background:#ffd36b;color:#1a1306;font:600 13px/1 "Pixelify Sans",ui-monospace,monospace;letter-spacing:.18em;text-transform:uppercase;cursor:pointer}
+#lm{min-height:18px;margin-top:12px;font:600 11px/1.3 "Pixelify Sans",ui-monospace,monospace;letter-spacing:.14em;text-transform:uppercase;color:#ff8fb8}
+#lock.busy #lf{opacity:.4;pointer-events:none}
+#lock.auto #lf,#lock.auto p{visibility:hidden}
+</style>
+</head>
+<body>
+<main id="lock" class="auto" aria-label="Lanternfall">
+<svg viewBox="0 0 14 18" shape-rendering="crispEdges" aria-hidden="true"><rect x="6" y="0" width="2" height="1" fill="#ffd36b"/><rect x="4" y="1" width="6" height="1" fill="#e9b04f"/><rect x="3" y="2" width="8" height="1" fill="#ffd36b"/><rect x="4" y="3" width="6" height="10" fill="#ffcf7a" fill-opacity=".22"/><rect x="3" y="3" width="1" height="10" fill="#e9b04f"/><rect x="10" y="3" width="1" height="10" fill="#e9b04f"/><rect x="3" y="13" width="8" height="1" fill="#ffd36b"/><rect x="4" y="14" width="6" height="1" fill="#e9b04f"/><g class="fl"><rect x="6" y="5" width="2" height="1" fill="#fff1c0"/><rect x="5" y="6" width="4" height="4" fill="#ffb347"/><rect x="6" y="7" width="2" height="3" fill="#fff6dc"/><rect x="6" y="10" width="2" height="1" fill="#ffd36b"/></g></svg>
+<h1>Lanternfall</h1>
+<p>This lantern is lit for invited keepers. Open the link you were sent, or enter its key.</p>
+<form id="lf" autocomplete="off"><input id="lk" aria-label="Key" placeholder="Key" autocapitalize="characters" autocorrect="off" spellcheck="false"><button id="lb">Unlock</button></form>
+<div id="lm" role="status"></div>
+</main>
+<script>
+(function(){
+  var K='lanternfall.key.v1',ITER=200000,el=document.getElementById('lock'),msg=document.getElementById('lm'),bin=null;
+  function norm(s){return String(s||'').toUpperCase().replace(/[^A-Z0-9]/g,'');}
+  function show(t){el.className='';msg.textContent=t||'';}
+  if(!window.crypto||!crypto.subtle){show('This browser can’t open the lantern. Try Safari.');return;}
+  function getBin(){if(bin)return Promise.resolve(bin);return fetch('game.bin',{cache:'no-cache'}).then(function(r){if(!r.ok)throw new Error('missing');return r.arrayBuffer();}).then(function(b){bin=new Uint8Array(b);return bin;});}
+  function open(k){return getBin().then(function(b){var salt=b.slice(0,16),iv=b.slice(16,28),ct=b.slice(28);
+    return crypto.subtle.importKey('raw',new TextEncoder().encode(k),'PBKDF2',false,['deriveKey']).then(function(base){
+      return crypto.subtle.deriveKey({name:'PBKDF2',salt:salt,iterations:ITER,hash:'SHA-256'},base,{name:'AES-GCM',length:256},false,['decrypt']);}).then(function(ak){
+      return crypto.subtle.decrypt({name:'AES-GCM',iv:iv},ak,ct);}).then(function(pt){return new TextDecoder().decode(pt);});});}
+  function go(k,typed){el.classList.add('busy');open(k).then(function(html){try{localStorage.setItem(K,k);}catch(e){}document.open();document.write(html);document.close();},
+    function(e){show(e&&e.message==='missing'?'The lantern couldn’t be reached. Check the internet and try again.':typed?'That key doesn’t fit this lantern.':'');});}
+  var m=/[#&]k=([A-Za-z0-9-]+)/.exec(location.hash),key=m?norm(m[1]):'';
+  if(!key){try{key=norm(localStorage.getItem(K));}catch(e){}}
+  document.getElementById('lf').addEventListener('submit',function(e){e.preventDefault();var k=norm(document.getElementById('lk').value);if(k)go(k,true);});
+  if(key)go(key,false);else show('');
+})();
+</script>
+</body>
+</html>
