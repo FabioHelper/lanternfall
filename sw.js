@@ -1,5 +1,5 @@
-/* Lanternfall offline cache, build e246d417 */
-const C='lanternfall-e246d417',EXT=["https://fonts.googleapis.com/css2?family=IM+Fell+English:ital@0;1&family=IM+Fell+English+SC&family=Pixelify+Sans:wght@400;600&family=Nunito:ital,wght@0,400;0,700;1,400&display=swap", "https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"],LOCAL=['./','index.html','game.bin','manifest.webmanifest','apple-touch-icon.png','icon-192.png','icon-512.png'];
+/* Lanternfall offline cache, build 1f808e94 */
+const C='lanternfall-1f808e94',EXT=["https://fonts.googleapis.com/css2?family=IM+Fell+English:ital@0;1&family=IM+Fell+English+SC&family=Pixelify+Sans:wght@400;600&family=Nunito:ital,wght@0,400;0,700;1,400&display=swap", "https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"],LOCAL=['./','index.html','game.bin','manifest.webmanifest','apple-touch-icon.png','icon-192.png','icon-512.png'];
 self.addEventListener('install',e=>{self.skipWaiting();e.waitUntil(caches.open(C).then(c=>c.addAll(LOCAL).catch(()=>{}).then(()=>Promise.all(EXT.map(u=>fetch(u,{mode:'no-cors'}).then(r=>c.put(u,r)).catch(()=>{}))))));});
 self.addEventListener('activate',e=>{e.waitUntil(caches.keys().then(ks=>Promise.all(ks.filter(k=>k.indexOf('lanternfall-')===0&&k!==C).map(k=>caches.delete(k)))).then(()=>self.clients.claim()));});
 self.addEventListener('fetch',e=>{const r=e.request;if(r.method!=='GET')return;const u=new URL(r.url);
